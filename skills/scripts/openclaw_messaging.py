@@ -6,7 +6,9 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -49,16 +51,38 @@ def resolve_message_target(
     return MessageTarget(channel=channel, target=target, account=account)
 
 
+def _resolve_openclaw_executable() -> str:
+    candidates = []
+    direct = shutil.which("openclaw")
+    if direct:
+        candidates.append(direct)
+
+    if os.name == "nt":
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            npm_cmd = Path(appdata) / "npm" / "openclaw.cmd"
+            npm_exe = Path(appdata) / "npm" / "openclaw.exe"
+            candidates.extend([str(npm_cmd), str(npm_exe)])
+        local_npm = Path.home() / "AppData" / "Roaming" / "npm" / "openclaw.cmd"
+        candidates.append(str(local_npm))
+
+    for item in candidates:
+        if item and Path(item).exists():
+            return str(Path(item))
+    return "openclaw"
+
+
 class OpenClawMessenger:
     def __init__(self, message_target: MessageTarget):
         self.message_target = message_target
+        self.openclaw_executable = _resolve_openclaw_executable()
 
     def is_ready(self) -> bool:
         return bool(self.message_target.channel and self.message_target.target)
 
     def _base_args(self) -> list[str]:
         args = [
-            "openclaw",
+            self.openclaw_executable,
             "message",
             "send",
             "--channel",
@@ -88,8 +112,12 @@ class OpenClawMessenger:
 
 def _run_openclaw(args: list[str], timeout: int) -> tuple[bool, str]:
     try:
+        run_args = args
+        if os.name == "nt" and args and args[0].lower().endswith((".cmd", ".bat")):
+            run_args = [os.environ.get("COMSPEC", "cmd.exe"), "/c", *args]
+
         result = subprocess.run(
-            args,
+            run_args,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -101,7 +129,7 @@ def _run_openclaw(args: list[str], timeout: int) -> tuple[bool, str]:
             return True, (result.stdout or "消息发送成功").strip()
         return False, (result.stderr or result.stdout or "openclaw 执行失败").strip()
     except FileNotFoundError:
-        return False, "未找到 openclaw CLI"
+        return False, f"未找到 openclaw CLI: {args[0] if args else 'openclaw'}"
     except subprocess.TimeoutExpired:
         return False, "openclaw 发送超时"
     except Exception as exc:  # pragma: no cover - defensive
