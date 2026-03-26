@@ -1,6 +1,6 @@
 # WeChat Article Assistant
 
-微信公众号文章助手。
+多个微信公众号文章同步和下载助手。
 
 这个 Skill 让 OpenClaw 直接通过本地 Python 脚本完成微信公众号相关操作，不再依赖单独部署的 Web 服务。它适合放在 OpenClaw 工作流里，用来统一管理：
 
