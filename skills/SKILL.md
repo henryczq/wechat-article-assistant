@@ -196,3 +196,7 @@ python scripts/wechat_article_assistant.py proxy-show --json
 - `references/interface-reference.md`
 - `references/design.md`
 - `references/sqlite-schema.md`
+
+只有在继续做产品规划、范围评审或长期演进设计时，再看仓库级文档：
+
+- `docs/wechat-article-assistant-requirements-functional-spec.md`
