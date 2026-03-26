@@ -11,53 +11,7 @@
 - Markdown / JSON 导出
 - 定时同步任务
 
-本项目根据开源项目(web)：https://github.com/wechat-article/wechat-article-exporter.git 进行的思路进行修改。大家也可以部署web进行使用，熟悉相关操作。
-
-作者：振振公子
-
 ---
-
-## 依赖安装
-在 Skill 目录下安装 Python 依赖：
-```bash
-python -m pip install -r requirements.txt
-```
-
-当前运行期第三方依赖包括：
-- `beautifulsoup4`：解析公众号文章 HTML
-- `requests`：请求微信公众号接口和代理接口
-- `markdownify`：把文章 HTML 转成 Markdown，用于导出 `article.md`
-
-### Windows 注意事项
-如果你在 Windows 上输入 `python` / `python3` 时被跳转到 Microsoft Store，优先检查系统的 **应用执行别名（App execution aliases）**：
-
-1. 打开开始菜单，搜索 **应用执行别名**（英文系统搜索 **App execution aliases**）
-2. 进入“管理应用执行别名”
-3. 找到：
-   - `python.exe`
-   - `python3.exe`
-4. 将这两个开关关闭
-
-关闭后再执行：
-```bash
-python -m pip install -r requirements.txt
-```
-
-如果这时仍提示找不到 `python`，说明机器上还没有正确安装 Python 或配置 PATH。
-
-### 快速环境检查
-推荐先执行：
-```bash
-python scripts/wechat_article_assistant.py env-check --json
-```
-
-它会检查：
-- `python` / `python3` 是否可用
-- Python 依赖是否已安装
-- 关键脚本文件是否存在
-- `openclaw` 命令是否可用
-- Skill 数据目录 / 二维码目录 / 数据库路径是否正常
-
 
 ## 适用场景
 
@@ -71,40 +25,6 @@ python scripts/wechat_article_assistant.py env-check --json
 - 为全部公众号配置每天自动同步任务
 
 ---
-
-## 操作示例
-### 登录
-![alt text](images/login.png)
-
-### 搜索与添加公众号
-![alt text](images/add.png)
-
-### 查看本地公众号列表
-![alt text](images/list.png)
-
-### 同步公众号文章
-![alt text](images/sync.png)
-
-
-### 查询最新文章清单
-![alt text](images/24hours.png)
-
-### 配置代理
-主要是为了防止被微信封禁。
-![alt text](images/daili.png)
-
-### 抓取单篇文章详情
-![alt text](images/get.png)
-
-
-### 定时同步任务
-![alt text](images/tb.png)
-
-### 删除公众号
-![alt text](images/delete.png)
-
-
-
 
 ## 主要功能
 
@@ -154,7 +74,8 @@ wechat-article-assistant/
 │   ├── run_sync_all.sh
 │   └── ...
 ├── references/
-└── data/
+├── images/
+└── agents/
 ```
 
 ---
@@ -294,7 +215,7 @@ python scripts/wechat_article_assistant.py sync-all --interval-seconds 180 --jso
 如果你想让 OpenClaw 每天自动同步一次全部公众号，推荐使用固定脚本入口：
 
 ```bash
-bash ${HOME}/.openclaw/workspace/skills/wechat-article-assistant/scripts/run_sync_all.sh
+bash ${HOME}/.openclaw/ws-xhs/skills/wechat-article-assistant/scripts/run_sync_all.sh
 ```
 
 这个脚本默认会调用：
@@ -353,14 +274,24 @@ python scripts/wechat_article_assistant.py recent-articles --hours 24 --limit 20
 
 # 数据说明
 
-本 Skill 会把数据保存在本地，通常包括：
+本 Skill 会把数据保存在本地，默认根目录为：
 
-- 登录态（token / cookies）
-- 公众号信息
-- 文章元数据
-- 文章正文缓存
-- 图片下载文件
-- 同步日志
+```text
+~/.openclaw/media/wechat-article-assistant/
+```
+
+如需覆盖，可设置：
+
+- `WECHAT_ARTICLE_ASSISTANT_HOME`
+- `WECHAT_ARTICLE_OPENCLAW_HOME`（兼容旧命名）
+
+根目录下通常包括：
+
+- `app.db`
+- `downloads/articles/`
+- `downloads/images/`
+- `qrcodes/`
+- `logs/wechat_article_assistant.log`
 
 常见导出内容：
 
@@ -449,3 +380,12 @@ python scripts/wechat_article_assistant.py sync-all --interval-seconds 180 --jso
 - `references/design.md`
 
 ---
+
+如果你是把这个 Skill 公开给别人使用，建议优先让用户先学会这 4 件事：
+
+1. 登录
+2. 添加公众号
+3. 拉文章列表
+4. 抓单篇文章详情
+
+这样上手最快。

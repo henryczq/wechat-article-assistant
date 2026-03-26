@@ -107,7 +107,7 @@
 
 - 入口脚本：`python scripts/wechat_article_assistant.py`
 - 数据存储：SQLite
-- 目录根：优先使用 `WECHAT_ARTICLE_ASSISTANT_HOME`，兼容 `WECHAT_ARTICLE_OPENCLAW_HOME`；默认仍使用 `~/.openclaw/media/wechat-article-openclaw/`
+- 目录根：优先使用 `WECHAT_ARTICLE_ASSISTANT_HOME`，兼容 `WECHAT_ARTICLE_OPENCLAW_HOME`；默认使用 `~/.openclaw/media/wechat-article-assistant/`
 - 日志：可选文件日志与控制台日志
 - 对外调用方式：OpenClaw/Trae 调用本地 Skill CLI
 
@@ -475,15 +475,16 @@
 
 默认：
 
-- `~/.openclaw/media/wechat-article-openclaw/`
+- `~/.openclaw/media/wechat-article-assistant/`
 
 可通过环境变量覆盖：
 
+- `WECHAT_ARTICLE_ASSISTANT_HOME`
 - `WECHAT_ARTICLE_OPENCLAW_HOME`
 
 ### 8.2 主要目录
 
-- `data/`
+- `app.db`
   SQLite 数据文件
 - `downloads/articles/`
   文章导出文件
@@ -682,4 +683,4 @@
 ### 13.4 调试验收
 
 - `--debug` 能在控制台输出调试信息。
-- `--debug` 或日志文件开关开启后，日志文件应写入 `logs/wechat_article_openclaw.log`。
+- `--debug` 或日志文件开关开启后，日志文件应写入 `logs/wechat_article_assistant.log`。
